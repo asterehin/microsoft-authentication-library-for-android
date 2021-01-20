@@ -40,9 +40,10 @@ jobs:
     clean: true
     submodules: recursive
     persistCredentials: True
-  - task: CredScan@2
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
     inputs:
-      toolMajorVersion: 'V2'
+      toolMajorVersion: V2
+      debugMode: false
   - task: PoliCheck@1
     name: PoliCheck_2
     displayName: Run PoliCheck
