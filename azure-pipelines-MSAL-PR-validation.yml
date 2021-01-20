@@ -41,12 +41,8 @@ jobs:
     submodules: recursive
     persistCredentials: True
   - task: CredScan@2
-    name: CredScan_1
-    displayName: Run CredScan
     inputs:
-      toolVersionV2: LatestPreRelease
-      debugMode: false
-      folderSuppression: false
+      toolMajorVersion: 'V2'
   - task: PoliCheck@1
     name: PoliCheck_2
     displayName: Run PoliCheck
