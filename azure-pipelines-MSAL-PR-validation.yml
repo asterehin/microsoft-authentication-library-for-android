@@ -67,7 +67,7 @@ jobs:
   - task: AzureKeyVault@1
     displayName: 'Azure Key Vault: Download Cert for Automation'
     inputs:
-      ConnectedServiceName: 52f0b8f0-fbe7-4c1b-8169-25886eb6bab4
+      ConnectedServiceName: MSID_LABS_PPE
       KeyVaultName: ADALTestInfo
       SecretsFilter: AndroidAutomationRunner
   - task: PowerShell@2
