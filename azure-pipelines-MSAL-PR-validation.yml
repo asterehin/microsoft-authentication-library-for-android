@@ -55,7 +55,6 @@ jobs:
       optionsXS: 1
       optionsSEV: 1|2
       optionsPE: 1|2|3|4
-      toolVersion: 5.8.0
   - task: PublishSecurityAnalysisLogs@2
     name: PublishSecurityAnalysisLogs15
     displayName: Publish Security Analysis Logs
