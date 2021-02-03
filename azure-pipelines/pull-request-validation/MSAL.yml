@@ -32,7 +32,7 @@ jobs:
   pool:
     name: Hosted Windows 2019 with VS2019
   steps:
-  - template: templates/steps/include-base.yml
+  - template: ../templates/steps/include-base.yml
   - task: JavaToolInstaller@0
     displayName: Use Java 8
     inputs:

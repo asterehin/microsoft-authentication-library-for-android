@@ -25,7 +25,7 @@ jobs:
   pool:
     name: Hosted Windows 2019 with VS2019
   steps:
-  - template: templates/steps/include-base.yml
+  - template: ../templates/steps/include-base.yml
   - task: Gradle@1
     name: Gradle1
     displayName: Assemble Release
