@@ -12,7 +12,7 @@ steps:
 - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
   displayName: Run CredScan
   inputs:
-    toolVersionV2: LatestPreRelease
+    toolMajorVersion: V2
     debugMode: false
     folderSuppression: false
 - task: PoliCheck@1
