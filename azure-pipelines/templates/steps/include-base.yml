@@ -1,8 +1,8 @@
 # File: include-base.yml
 
 parameters:
-  name: policheck.inputType
-  name: policheck.cmdLineArgs
+- name: policheck.inputType
+- name: policheck.cmdLineArgs
 
 steps:
 - checkout: self
