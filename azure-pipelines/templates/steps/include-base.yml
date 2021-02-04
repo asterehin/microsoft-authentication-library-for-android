@@ -9,7 +9,7 @@ steps:
   clean: true
   submodules: recursive
   persistCredentials: True
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
+- task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
   displayName: Run CredScan
   inputs:
     toolVersionV2: LatestPreRelease
