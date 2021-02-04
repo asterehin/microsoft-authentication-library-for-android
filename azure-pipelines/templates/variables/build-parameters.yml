@@ -1,5 +1,0 @@
-# File: build-parameters.yml
-
-variables:
-  BuildParameters.cmdLineArgs: /F:$(Build.SourcesDirectory)+"\adal\src\" /T:9 /O:\"PoliCheck.xml\"
-  BuildParameters.inputType: Basic

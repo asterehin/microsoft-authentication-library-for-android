@@ -7,6 +7,7 @@
 # Variable 'test_repo_branch' was defined in the Variables tab
 # Variable 'test_repo_dir' was defined in the Variables tab
 variables:
+- template: ../templates/variables/policheck.yml
 - name: BuildParameters.jdkVersion
   value: 1.8
 - name: BuildParameters.jdkArchitecture
@@ -33,6 +34,9 @@ jobs:
     name: Hosted Windows 2019 with VS2019
   steps:
   - template: ../templates/steps/include-base.yml
+    parameters:
+      policheck.inputType: variables.policheck.inputType
+      policheck.cmdLineArgs: variables.policheck.cmdLineArgs
   - task: JavaToolInstaller@0
     displayName: Use Java 8
     inputs:

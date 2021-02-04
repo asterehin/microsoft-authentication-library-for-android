@@ -1,5 +1,8 @@
-variables:
-- template: ../variables/build-parameters.yml
+# File: include-base.yml
+
+parameters:
+  name: policheck.inputType
+  name: policheck.cmdLineArgs
 
 steps:
 - checkout: self
@@ -17,8 +20,8 @@ steps:
   name: PoliCheck_2
   displayName: Run PoliCheck
   inputs:
-    inputType: $(variables.BuildParameters.inputType)
-    cmdLineArgs: $(variables.BuildParameters.cmdLineArgs)
+    inputType: $(parameters.policheck.inputType)
+    cmdLineArgs: $(parameters.policheck.cmdLineArgs)
     importEx: 0
     optionsFC: 1
     optionsXS: 1
