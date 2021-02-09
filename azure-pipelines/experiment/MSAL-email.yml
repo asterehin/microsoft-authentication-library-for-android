@@ -1,0 +1,70 @@
+# 'Allow scripts to access the OAuth token' was selected in pipeline.  Add the following YAML to any steps requiring access:
+#       env:
+#           MY_ACCESS_TOKEN: $(System.AccessToken)
+# Variable 'android:serverUrl' was defined in the Variables tab
+# Variable 'ENV_VSTS_MVN_ANDROIDADACCOUNTS_USERNAME' was defined in the Variables tab
+# Variable 'idlabEmailAccount' was defined in the Variables tab
+# Variable 'idlabEmailAccountPassword' was defined in the Variables tab
+# Variable 'mvnAccessToken' was defined in the Variables tab
+# Variable 'test_repo_branch' was defined in the Variables tab
+# Variable 'test_repo_dir' was defined in the Variables tab
+# Variable 'testEmailAccount' was defined in the Variables tab
+# Variable 'testEmailAccountPassword' was defined in the Variables tab
+# Variable 'testEmailAccountPassword2' was defined in the Variables tab
+# Variable 'toEmailAccount' was defined in the Variables tab
+variables:
+- template: ../templates/variables/policheck.yml
+name: $(date:yyyyMMdd)$(rev:.r)
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: dev
+jobs:
+- job: Phase_1
+  displayName: Phase 1
+  cancelTimeoutInMinutes: 1
+  pool:
+    name: Hosted Windows 2019 with VS2019
+  steps:
+  - task: email@0
+    displayName: Send Email
+    inputs:
+      emailFrom: $(toEmailAccount)
+      emailTo: $(toEmailAccount)
+      emailSubject: Test Email from task
+      emailBody: Hello World!
+  - task: DownloadSecureFile@1
+    name: sendEmail
+    displayName: Download Email Script secure file
+    inputs:
+      secureFile: sendEmail.exe
+      retryCount: 5
+  - task: PowerShell@2
+    displayName: 'PowerShell Email Script '
+    inputs:
+      targetType: inline
+      script: >-
+        # Write your PowerShell commands here.
+
+
+        $(sendEmail.secureFilePath) $(idlabEmailAccount) $(idlabEmailAccountPassword) $(toEmailAccount)
+  - template: ../templates/steps/include-base.yml
+    parameters:
+      policheck.inputType: variables.policheck.inputType
+      policheck.cmdLineArgs: variables.policheck.cmdLineArgs
+  - task: Gradle@1
+    name: Gradle1
+    displayName: Assemble Release
+    inputs:
+      tasks: clean msal:assembleLocal
+      publishJUnitResults: false
+      jdkArchitecture: x86
+      sqAnalysisBreakBuildIfQualityGateFailed: false
+  - task: Gradle@2
+    displayName: Run Unit tests
+    inputs:
+      tasks: msal:testLocalDebugUnitTest -Plabtest
+  - task: ComponentGovernanceComponentDetection@0
+    displayName: Component Detection
+...

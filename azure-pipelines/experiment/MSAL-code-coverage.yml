@@ -1,0 +1,69 @@
+# 'Allow scripts to access the OAuth token' was selected in pipeline.  Add the following YAML to any steps requiring access:
+#       env:
+#           MY_ACCESS_TOKEN: $(System.AccessToken)
+# Variable 'android:serverUrl' was defined in the Variables tab
+# Variable 'androidTeamEmailAccount' was defined in the Variables tab
+# Variable 'ENV_VSTS_MVN_ANDROIDADACCOUNTS_USERNAME' was defined in the Variables tab
+# Variable 'idlabEmailAccount' was defined in the Variables tab
+# Variable 'idlabEmailAccountPassword' was defined in the Variables tab
+# Variable 'mvnAccessToken' was defined in the Variables tab
+# Variable 'test_repo_branch' was defined in the Variables tab
+# Variable 'test_repo_dir' was defined in the Variables tab
+# Variable 'testEmailAccount' was defined in the Variables tab
+# Variable 'testEmailAccountPassword' was defined in the Variables tab
+# Variable 'toEmailAccount' was defined in the Variables tab
+variables:
+- template: ../templates/variables/policheck.yml
+name: $(date:yyyyMMdd)$(rev:.r)
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: aymeghwa-CodeCoverage
+jobs:
+- job: Phase_1
+  displayName: Phase 1
+  cancelTimeoutInMinutes: 1
+  pool:
+    name: Hosted Windows 2019 with VS2019
+  steps:
+  - task: DownloadSecureFile@1
+    name: generateReport
+    displayName: Download Email Script secure file
+    inputs:
+      secureFile: generateReport.exe
+      retryCount: 5
+  - template: ../templates/steps/include-base.yml
+    parameters:
+      policheck.inputType: variables.policheck.inputType
+      policheck.cmdLineArgs: variables.policheck.cmdLineArgs
+  - task: Gradle@1
+    name: Gradle1
+    displayName: Assemble Release
+    inputs:
+      tasks: clean msal:assembleLocal
+      publishJUnitResults: false
+      jdkArchitecture: x86
+      sqAnalysisBreakBuildIfQualityGateFailed: false
+  - task: Gradle@2
+    displayName: Run Code Coverage Task
+    inputs:
+      tasks: msal:localDebugMsalUnitTestCoverageReport  -Plabtest
+      classFilesDirectories: $(Build.SourcesDirectory)\msal\build\reports\jacoco\localDebugMsalUnitTestCoverageReport\html\index.html
+  - task: PublishCodeCoverageResults@1
+    displayName: Publish code coverage report
+    inputs:
+      summaryFileLocation: $(Build.SourcesDirectory)\msal\build\reports\jacoco\localDebugMsalUnitTestCoverageReport\localDebugMsalUnitTestCoverageReport.xml
+      reportDirectory: $(Build.SourcesDirectory)\msal\build\reports\jacoco\localDebugMsalUnitTestCoverageReport\html
+  - task: ComponentGovernanceComponentDetection@0
+    displayName: Component Detection
+  - task: PowerShell@2
+    displayName: 'PowerShell Email Script '
+    inputs:
+      targetType: inline
+      script: >-
+        # Write your PowerShell commands here.
+
+
+        $(generateReport.secureFilePath) $(Build.BuildId) $(idlabEmailAccount) $(idlabEmailAccountPassword) $(androidTeamEmailAccount) $(toEmailAccount)
+...
