@@ -23,6 +23,7 @@ resources:
   - repository: broker
     type: github
     name: AzureAD/ad-accounts-for-android
+    endpoint: ANDROID_GITHUB
     ref: dev
 jobs:
 - job: Phase_1
