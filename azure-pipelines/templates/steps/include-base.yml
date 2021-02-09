@@ -3,9 +3,11 @@
 parameters:
 - name: policheck.inputType
 - name: policheck.cmdLineArgs
+- name: repository
+  default: self
 
 steps:
-- checkout: self
+- checkout: ${{ repository }}
   clean: true
   submodules: recursive
   persistCredentials: True

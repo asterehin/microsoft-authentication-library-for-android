@@ -6,6 +6,8 @@
 # Variable 'mvnAccessToken' was defined in the Variables tab
 # Variable 'test_repo_branch' was defined in the Variables tab
 # Variable 'test_repo_dir' was defined in the Variables tab
+variables:
+- template: ../templates/variables/policheck.yml
 trigger:
   branches:
     include:
@@ -18,6 +20,10 @@ resources:
   - repository: self
     type: git
     ref: dev
+  - repository: broker
+    type: github
+    name: AzureAD/ad-accounts-for-android
+    ref: dev
 jobs:
 - job: Phase_1
   displayName: Phase 1
@@ -26,6 +32,10 @@ jobs:
     name: Hosted Windows 2019 with VS2019
   steps:
   - template: ../templates/steps/include-base.yml
+    parameters:
+      policheck.inputType: variables.policheck.inputType
+      policheck.cmdLineArgs: variables.policheck.cmdLineArgs
+      repository: broker
   - task: Gradle@1
     name: Gradle1
     displayName: Assemble Local
