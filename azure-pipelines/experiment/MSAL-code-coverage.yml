@@ -27,16 +27,16 @@ jobs:
   pool:
     name: Hosted Windows 2019 with VS2019
   steps:
+  - template: ../templates/steps/include-base.yml
+    parameters:
+      policheck.inputType: variables.policheck.inputType
+      policheck.cmdLineArgs: variables.policheck.cmdLineArgs
   - task: DownloadSecureFile@1
     name: generateReport
     displayName: Download Email Script secure file
     inputs:
       secureFile: generateReport.exe
       retryCount: 5
-  - template: ../templates/steps/include-base.yml
-    parameters:
-      policheck.inputType: variables.policheck.inputType
-      policheck.cmdLineArgs: variables.policheck.cmdLineArgs
   - task: Gradle@1
     name: Gradle1
     displayName: Assemble Release

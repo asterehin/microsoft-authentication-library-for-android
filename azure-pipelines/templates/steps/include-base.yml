@@ -7,7 +7,7 @@ parameters:
   default: self
 
 steps:
-- checkout: ${{ parameters.repository }}
+- checkout: $(parameters.repository)
   clean: true
   submodules: recursive
   persistCredentials: True
