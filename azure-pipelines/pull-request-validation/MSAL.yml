@@ -36,7 +36,7 @@ jobs:
   - template: ../templates/steps/include-base.yml
     parameters:
       policheck.inputType: variables.policheck.inputType
-      policheck.cmdLineArgs: variables.policheck.cmdLineArgs
+      policheck.cmdLineArgs: test
   - task: JavaToolInstaller@0
     displayName: Use Java 8
     inputs:
