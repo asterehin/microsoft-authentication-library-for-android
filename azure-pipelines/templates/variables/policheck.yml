@@ -1,5 +1,0 @@
-# File: policheck.yml
-
-variables:
-  policheck.cmdLineArgs: /F:$(Build.SourcesDirectory)+"\adal\src\" /T:9 /O:\"PoliCheck.xml\"
-  policheck.inputType: Basic

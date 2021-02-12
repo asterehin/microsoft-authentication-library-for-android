@@ -1,36 +1,6 @@
-# File: include-base.yml
-
-parameters:
-- name: policheck.inputType
-- name: policheck.cmdLineArgs
-- name: repository
-  default: self
+# File: automation-cert.yml
 
 steps:
-- checkout: ${{ parameters.repository }}
-  clean: true
-  submodules: recursive
-  persistCredentials: True
-- task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
-  displayName: Run CredScan
-  inputs:
-    toolMajorVersion: V2
-    debugMode: false
-    folderSuppression: false
-- task: PoliCheck@1
-  name: PoliCheck_2
-  displayName: Run PoliCheck
-  inputs:
-    inputType: $(parameters.policheck.inputType)
-    cmdLineArgs: $(parameters.policheck.cmdLineArgs)
-    importEx: 0
-    optionsFC: 1
-    optionsXS: 1
-    optionsSEV: 1|2
-    optionsPE: 1|2|3|4
-- task: PublishSecurityAnalysisLogs@2
-  name: PublishSecurityAnalysisLogs15
-  displayName: Publish Security Analysis Logs
 - task: CmdLine@1
   displayName: Set MVN Access Token in Environment
   inputs:

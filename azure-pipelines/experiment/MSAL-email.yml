@@ -12,8 +12,10 @@
 # Variable 'testEmailAccountPassword' was defined in the Variables tab
 # Variable 'testEmailAccountPassword2' was defined in the Variables tab
 # Variable 'toEmailAccount' was defined in the Variables tab
-variables:
-- template: ../templates/variables/policheck.yml
+
+# Variable 'idlabEmailAccount' was defined in the Variables tab
+# Variable 'idlabEmailAccountPassword' was defined in the Variables tab
+# Variable 'toEmailAccount' was defined in the Variables tab
 name: $(date:yyyyMMdd)$(rev:.r)
 resources:
   repositories:
@@ -27,10 +29,8 @@ jobs:
   pool:
     name: Hosted Windows 2019 with VS2019
   steps:
-  - template: ../templates/steps/include-base.yml
-    parameters:
-      policheck.inputType: variables.policheck.inputType
-      policheck.cmdLineArgs: variables.policheck.cmdLineArgs
+  - template: ../templates/steps/checkout-credscan-policheck.yml
+  - template: ../templates/steps/automation-cert.yml
   - task: email@0
     displayName: Send Email
     inputs:

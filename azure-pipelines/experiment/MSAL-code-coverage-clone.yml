@@ -9,8 +9,6 @@
 # Variable 'testEmailAccount' was defined in the Variables tab
 # Variable 'testEmailAccountPassword' was defined in the Variables tab
 # Variable 'toEmailAccount' was defined in the Variables tab
-variables:
-- template: ../templates/variables/policheck.yml
 name: $(date:yyyyMMdd)$(rev:.r)
 resources:
   repositories:
@@ -25,9 +23,7 @@ jobs:
     name: Hosted Windows 2019 with VS2019
   steps:
   - template: ../templates/steps/include-base.yml
-    parameters:
-      policheck.inputType: variables.policheck.inputType
-      policheck.cmdLineArgs: variables.policheck.cmdLineArgs
+  - template: ../templates/steps/automation-cert.yml
   - task: Gradle@1
     name: Gradle1
     displayName: Assemble Release
