@@ -4,10 +4,16 @@
 # Variable 'android:serverUrl' was defined in the Variables tab
 # Variable 'ENV_VSTS_MVN_ANDROIDADACCOUNTS_USERNAME' was defined in the Variables tab
 # Variable 'gcloud_project_id' was defined in the Variables tab
+# Variable 'msal_version' was defined in the Variables tab
 # Variable 'mvnAccessToken' was defined in the Variables tab
 # Variable 'test_repo_branch' was defined in the Variables tab
 # Variable 'test_repo_dir' was defined in the Variables tab
-
+variables:
+- name: gcloud_project_id
+  value: msal-automation-app-764c7
+variables:
+- name: msalVersion
+  value: # not set
 name: $(date:yyyyMMdd)$(rev:.r)
 resources:
   repositories:
@@ -25,27 +31,20 @@ jobs:
   - template: ../templates/steps/set-at-download-cert.yml
     parameters:
       secretsfilter: AndroidAutomationRunnerAppSecret
-  - task: DownloadBuildArtifacts@0
-    displayName: Download Broker Host APK
-    inputs:
-      buildType: specific
-      project: a7934fdd-dcde-4492-a406-7fad6ac00e17
-      definition: 1195
-      buildVersionToDownload: latestFromBranch
-      branchName: refs/heads/dev
-      artifactName: BrokerHostDebug
-  - task: DownloadSecureFile@1
-    name: azureSampleApk
-    displayName: Download Azure Sample Debug APK
-    inputs:
-      secureFile: 960465ec-c668-4926-a723-32c6c952d643
-      retryCount: 5
   - task: DownloadSecureFile@1
     name: firebaseKey
     displayName: Download Firebase Service Account Key File
     inputs:
       secureFile: b4ed35b0-bb20-4830-8a21-2297e3de7fa1
       retryCount: 5
+  - task: DownloadBuildArtifacts@0
+    displayName: Download Azure Sample
+    inputs:
+      buildType: specific
+      project: a7934fdd-dcde-4492-a406-7fad6ac00e17
+      definition: 1278
+      specificBuildWithTriggering: true
+      artifactName: AzureSampleExternalRelease
   - task: PowerShell@2
     displayName: Uninstall gcloud
     inputs:
@@ -128,18 +127,32 @@ jobs:
         gcloud config set project $(gcloud_project_id)
 
         gcloud firebase test android models list
+  - task: PowerShell@2
+    displayName: Generate Assemble Task Name for MSAL automation app
+    inputs:
+      targetType: inline
+      script: >-
+        $assembleTask = "assembleDistAutoBrokerDebug"
+
+
+        if (("$(msal_version)" -ne "")) {
+            $assembleTask = $assembleTask + " -PdistMsalVersion=" + "$(msal_version)"
+        }
+
+
+        Write-Host "##vso[task.setvariable variable=AssembleTask;]$assembleTask"
   - task: Gradle@1
     name: Gradle1
     displayName: Assemble MSAL Automation App
     inputs:
-      tasks: clean msalautomationapp:assembleLocalBrokerHost -PlabSecret=$(AndroidAutomationRunnerAppSecret) -PpreferPreInstalledApks
+      tasks: clean msalautomationapp:$(assembleTask) -PlabSecret=$(AndroidAutomationRunnerAppSecret) -PpreferPreInstalledApks -PbrokerSource=PlayStore
       publishJUnitResults: false
       jdkArchitecture: x86
       sqAnalysisBreakBuildIfQualityGateFailed: false
   - task: Gradle@1
     displayName: Assemble MSAL Automation App Instrumented Tests
     inputs:
-      tasks: msalautomationapp:assembleLocalBrokerHostDebugAndroidTest -PlabSecret=$(AndroidAutomationRunnerAppSecret) -PpreferPreInstalledApks
+      tasks: msalautomationapp:assembleDistAutoBrokerDebugAndroidTest
       publishJUnitResults: false
       jdkArchitecture: x86
       sqAnalysisBreakBuildIfQualityGateFailed: false
@@ -150,29 +163,25 @@ jobs:
       script: >-
         $baseApkPath = "$(Build.SourcesDirectory)\msalautomationapp\build\outputs\apk"
 
-        $appApk = "$baseApkPath\localBrokerHost\debug\msalautomationapp-local-BrokerHost-debug.apk"
+        $appApk = "$baseApkPath\distAutoBroker\debug\msalautomationapp-dist-AutoBroker-debug.apk"
 
-        $testApk = "$baseApkPath\androidTest\localBrokerHost\debug\msalautomationapp-local-BrokerHost-debug-androidTest.apk"
+        $testApk = "$baseApkPath\androidTest\distAutoBroker\debug\msalautomationapp-dist-AutoBroker-debug-androidTest.apk"
 
-        $brokerHostApk = "$(System.ArtifactsDirectory)\BrokerHostDebug\brokerHost-local-debug.apk"
-
-        $azureSampleApk = "$(azureSampleApk.secureFilePath)"
+        $azureSampleApk = "$(System.ArtifactsDirectory)\AzureSampleExternalRelease\app-external-release.apk"
 
         $appApk
 
         $testApk
 
-        $brokerHostApk
-
         $azureSampleApk
 
-        gcloud firebase test android run --type instrumentation --app $appApk --test $testApk --device model=flame,version=29 --timeout 45m --additional-apks $brokerHostApk,$azureSampleApk --results-dir msal-BrokerHost-$(Build.BuildId)-$(Build.BuildNumber) --directories-to-pull "/sdcard" --environment-variables clearPackageData=true,coverage=true,coverageFilePath=/sdcard/ --use-orchestrator
+        gcloud firebase test android run --type instrumentation --app $appApk --test $testApk --device model=flame,version=29 --timeout 45m --additional-apks $azureSampleApk --results-dir msal-release-$(Build.BuildId)-$(Build.BuildNumber) --directories-to-pull "/sdcard" --use-orchestrator  --environment-variables clearPackageData=true --results-history-name "MSAL Dist w/ PROD Brokers"
   - task: PowerShell@2
     displayName: Download Test Result File
     condition: succeededOrFailed()
     inputs:
       targetType: inline
-      script: gsutil cp gs://test-lab-ffz6x9pu2y62a-is0rq7a7rwdhi/msal-BrokerHost-$(Build.BuildId)-$(Build.BuildNumber)/flame-29-en-portrait/test_result_1.xml $(Build.SourcesDirectory)
+      script: gsutil cp gs://test-lab-ffz6x9pu2y62a-is0rq7a7rwdhi/msal-release-$(Build.BuildId)-$(Build.BuildNumber)/flame-29-en-portrait/test_result_1.xml $(Build.SourcesDirectory)
   - task: PublishTestResults@2
     displayName: Publish Test Results to ADO
     condition: succeededOrFailed()

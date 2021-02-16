@@ -22,8 +22,11 @@ jobs:
   pool:
     name: Hosted Windows 2019 with VS2019
   steps:
-  - template: ../templates/steps/include-base.yml
-  - template: ../templates/steps/automation-cert.yml
+  - template: ../templates/steps/checkout-credscan-policheck.yml
+  - template: ../templates/steps/set-at-download-cert.yml
+    parameters:
+      secretsfilter: AndroidAutomationRunner
+  - template: ../templates/steps/install-automation-cert.yml
   - task: Gradle@1
     name: Gradle1
     displayName: Assemble Release

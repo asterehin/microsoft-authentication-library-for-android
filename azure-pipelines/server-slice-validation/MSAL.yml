@@ -26,7 +26,10 @@ jobs:
     name: Hosted Windows 2019 with VS2019
   steps:
   - template: ../templates/steps/checkout-credscan-policheck.yml
-  - template: ../templates/steps/automation-cert.yml
+  - template: ../templates/steps/set-at-download-cert.yml
+    parameters:
+      secretsfilter: AndroidAutomationRunner
+  - template: ../templates/steps/install-automation-cert.yml
   - task: Gradle@1
     name: Gradle1
     displayName: Assemble Release
@@ -38,7 +41,7 @@ jobs:
   - task: Gradle@2
     displayName: Run Unit tests
     inputs:
-      tasks: msal:testLocalDebugUnitTest --tests com.microsoft.identity.client.e2e.tests.network.* -Plabtest -Pslice=$(slice) -Pdc=$(su) -PwriteTestResultsToCsv=$(writeTestResultsToCsv) -PbuildId=$(Build.BuildNumber)
+      tasks: msal:testLocalDebugUnitTest --tests com.microsoft.identity.client.e2e.tests.network.* -Plabtest -Pslice=$(slice) -Pdc=$(su) -PwriteTestResultsToCsv=$(writeTestResultsToCsv) -PbuildId=$(Build.BuildNumber) -ProbolectricSdkVersion=28
   - task: CmdLine@2
     displayName: Install Kusto Ingest SDK
     condition: succeededOrFailed()

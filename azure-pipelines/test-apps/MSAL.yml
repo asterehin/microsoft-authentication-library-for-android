@@ -62,7 +62,10 @@ jobs:
 
 
         Write-Host "##vso[task.setvariable variable=AssembleTask;]$assembleTask"
-  - template: ../templates/steps/automation-cert.yml
+  - template: ../templates/steps/set-at-download-cert.yml
+    parameters:
+      secretsfilter: AndroidAutomationRunner
+  - template: ../templates/steps/install-automation-cert.yml
   - task: Gradle@1
     name: Gradle1
     displayName: Assemble MSAL Test App

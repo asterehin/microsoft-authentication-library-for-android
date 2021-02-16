@@ -6,8 +6,8 @@
 # Variable 'mvnAccessToken' was defined in the Variables tab
 # Variable 'test_repo_branch' was defined in the Variables tab
 # Variable 'test_repo_dir' was defined in the Variables tab
+
 variables:
-# Variable 'mvnAccessToken' was defined in the Variables tab
 - name: BuildParameters.jdkVersion
   value: 1.8
 - name: BuildParameters.jdkArchitecture
@@ -34,7 +34,10 @@ jobs:
     name: Hosted Windows 2019 with VS2019
   steps:
   - template: ../templates/steps/checkout-credscan-policheck.yml
-  - template: ../templates/steps/automation-cert.yml
+  - template: ../templates/steps/set-at-download-cert.yml
+    parameters:
+      secretsfilter: AndroidAutomationRunner
+  - template: ../templates/steps/install-automation-cert.yml
   - task: JavaToolInstaller@0
     displayName: Use Java 8
     inputs:
@@ -59,4 +62,3 @@ jobs:
   - task: ComponentGovernanceComponentDetection@0
     displayName: Component Detection
 ...
-

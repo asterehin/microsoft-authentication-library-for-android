@@ -13,9 +13,6 @@
 # Variable 'testEmailAccountPassword2' was defined in the Variables tab
 # Variable 'toEmailAccount' was defined in the Variables tab
 
-# Variable 'idlabEmailAccount' was defined in the Variables tab
-# Variable 'idlabEmailAccountPassword' was defined in the Variables tab
-# Variable 'toEmailAccount' was defined in the Variables tab
 name: $(date:yyyyMMdd)$(rev:.r)
 resources:
   repositories:
@@ -30,7 +27,10 @@ jobs:
     name: Hosted Windows 2019 with VS2019
   steps:
   - template: ../templates/steps/checkout-credscan-policheck.yml
-  - template: ../templates/steps/automation-cert.yml
+  - template: ../templates/steps/set-at-download-cert.yml
+    parameters:
+      secretsfilter: AndroidAutomationRunner
+  - template: ../templates/steps/install-automation-cert.yml
   - task: email@0
     displayName: Send Email
     inputs:
@@ -42,7 +42,7 @@ jobs:
     name: sendEmail
     displayName: Download Email Script secure file
     inputs:
-      secureFile: sendEmail.exe
+      secureFile: 4d5b65a7-3620-4e49-8ee8-7e3eb9517e1a
       retryCount: 5
   - task: PowerShell@2
     displayName: 'PowerShell Email Script '

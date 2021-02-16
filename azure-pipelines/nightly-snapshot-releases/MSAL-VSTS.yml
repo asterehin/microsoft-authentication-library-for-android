@@ -48,7 +48,10 @@ jobs:
       uploadPREfast: false
       uploadRoslyn: false
       uploadTSLint: false
-  - template: ../templates/steps/automation-cert.yml
+  - template: ../templates/steps/set-at-download-cert.yml
+    parameters:
+      secretsfilter: AndroidAutomationRunner
+  - template: ../templates/steps/install-automation-cert.yml
   - task: Gradle@2
     displayName: Snapshot version update
     inputs:

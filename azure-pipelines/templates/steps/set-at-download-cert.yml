@@ -1,0 +1,18 @@
+# File: set-at-download-cert.yml
+
+parameters:
+- name: secretsfilter
+  default: *
+
+steps:
+- task: CmdLine@1
+  displayName: Set MVN Access Token in Environment
+  inputs:
+    filename: echo
+    arguments: '##vso[task.setvariable variable=ENV_VSTS_MVN_ANDROIDADACCOUNTS_ACCESSTOKEN]$(mvnAccessToken)'
+- task: AzureKeyVault@1
+  displayName: 'Azure Key Vault: Download Cert for Automation'
+  inputs:
+      ConnectedServiceName: 9a9308ae-59b4-475f-b49c-3e828c508d8b
+      KeyVaultName: ADALTestInfo
+      SecretsFilter: ${{ secretsfilter }}

@@ -13,10 +13,6 @@
 # Variable 'testEmailAccountPassword' was defined in the Variables tab
 # Variable 'toEmailAccount' was defined in the Variables tab
 
-# Variable 'idlabEmailAccount' was defined in the Variables tab
-# Variable 'idlabEmailAccountPassword' was defined in the Variables tab
-# Variable 'androidTeamEmailAccount' was defined in the Variables tab
-# Variable 'toEmailAccount' was defined in the Variables tab
 name: $(date:yyyyMMdd)$(rev:.r)
 resources:
   repositories:
@@ -31,12 +27,15 @@ jobs:
     name: Hosted Windows 2019 with VS2019
   steps:
   - template: ../templates/steps/checkout-credscan-policheck.yml
-  - template: ../templates/steps/automation-cert.yml
+  - template: ../templates/steps/set-at-download-cert.yml
+    parameters:
+      secretsfilter: AndroidAutomationRunner
+  - template: ../templates/steps/install-automation-cert.yml
   - task: DownloadSecureFile@1
     name: generateReport
     displayName: Download Email Script secure file
     inputs:
-      secureFile: generateReport.exe
+      secureFile: ef6e868b-e669-488e-ba56-842088c3e7da
       retryCount: 5
   - task: Gradle@1
     name: Gradle1
