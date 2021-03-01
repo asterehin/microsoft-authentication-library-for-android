@@ -255,13 +255,13 @@ dependencies {
     androidTestImplementation "androidx.test:rules:$rootProject.rulesVersion"
     androidTestImplementation "org.mockito:mockito-android:$rootProject.ext.mockitoAndroidVersion"
     // 'local' flavor dependencies
-    localApi(project(":common")) {
+    localApi("com.github.asterehin:microsoft-authentication-library-common-for-android:2.0.6-Coins") {
         transitive = false
     }
 
-    snapshotApi(group: 'com.microsoft.identity', name: 'common', version: '3.0.9', changing: true)
+    snapshotApi(group: 'com.github.asterehin', name: 'microsoft-authentication-library-common-for-android', version: '2.0.6-Coins', changing: true)
 
-    distApi("com.microsoft.identity:common:3.0.9") {
+    distApi("com.github.asterehin:microsoft-authentication-library-common-for-android:2.0.6-Coins") {
         transitive = false
     }
 }
@@ -404,7 +404,7 @@ publishing {
 
 tasks.whenTaskAdded { task ->
     if (task.name.contains('assemble')) {
-        task.dependsOn 'pmd'
+        task.dependsOn 'lint'
     }
 
     if (task.name.contains('assemble')

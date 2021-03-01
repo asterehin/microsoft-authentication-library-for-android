@@ -511,8 +511,8 @@ public class PublicClientApplicationConfiguration {
             Logger.error(TAG, "Unexpected error in verifyRedirectUriWithAppSignature()", e);
         }
 
-        throw new MsalClientException(
-                MsalClientException.REDIRECT_URI_VALIDATION_ERROR,
+        // to allow more flexibility changed to a warning
+        Logger.warn(TAG, MsalClientException.REDIRECT_URI_VALIDATION_ERROR,
                 "The redirect URI in the configuration file doesn't match with the one " +
                         "generated with package name and signature hash. Please verify the uri in the config file and your app registration in Azure portal.");
     }
